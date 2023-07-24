@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
 import DirectionsCarOutlined from "@mui/icons-material/DirectionsCarOutlined";
-import VehiclesData from "../csv/vehicles.csv";
-import Papa from "papaparse";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import axios from 'axios';
+import { Button } from "@mui/material";
 
 const VehiclesPage = () => {
   const [vehicles, setVehicles] = useState([]);
+  const DISPLAY_PER_PAGE = 300
+  let [currPage, setCurrPage] = useState(0)
 
-//   useEffect(() => {
-//     const fetchVehicles = async () => {
-//       const response = await fetch(VehiclesData);
-//       const reader = response.body.getReader();
-//       const data = await reader.read();
-//       const decoder = new TextDecoder("utf-8");
-//       const csvData = decoder.decode(data.value);
-//       const parsedData = Papa.parse(csvData, {
-//         header: true,
-//         skipEmptyLines: true,
-//       }).data;
-//       setVehicles(parsedData);
-//     };
+  const clickButton = () => {
+    setCurrPage(currPage+1)
+    console.log(currPage)
+  }
 
-//     fetchVehicles();
-//   }, []);
-
+  const requestVehicles = () => {
+    axios.get("http://localhost:8000/vehicles", { params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage } })
+        .then((response) => {
+            setVehicles(response.data)
+            // console.log(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+  }
   useEffect(() => {
     axios.get("http://localhost:8000/vehicles")
         .then((response) => {
@@ -71,7 +69,17 @@ const VehiclesPage = () => {
           </Grid>
         ) : null}
       </Box>
+      <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={clickButton}
+            >
+              Load More
+            </Button>
     </div>
+    
   );
 };
 

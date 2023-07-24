@@ -8,18 +8,27 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 const LoginPage = ({ onLogin }) => {
   const [creds, setCreds] = useState({});
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('')
 
-  function handleLogin() {
-    if (creds.username === "admin" && creds.password === "123") {
-      onLogin && onLogin({ username: creds.username });
-      navigate("/vehicles");
-    }
+  const requestLogin = (e) => {
+    e.preventDefault()
+    axios.post("http://localhost:8000/login", {
+      email: creds.email,
+      password: creds.password
+    })
+    .then((response) => {
+      setErrorMessage('hello')
+    })
+    .catch((error) => {
+      setErrorMessage(error.response.data.message)
+    });
   }
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -38,41 +47,44 @@ const LoginPage = ({ onLogin }) => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              value={creds.username}
-              onChange={(e) => setCreds({ ...creds, username: e.target.value })}
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              value={creds.password}
-              onChange={(e) => setCreds({ ...creds, password: e.target.value })}
-              autoComplete="current-password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={handleLogin}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Log In
-            </Button>
-          </Box>
+          <form onSubmit={requestLogin}>
+            <Box component="div" noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={creds.email}
+                onChange={(e) => setCreds({ ...creds, email: e.target.value })}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={creds.password}
+                onChange={(e) => setCreds({ ...creds, password: e.target.value })}
+                autoComplete="current-password"
+              />
+              <p>{errorMessage}</p>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Log In
+              </Button>
+            </Box>
+          </form>
         </Box>
       </Container>
     </ThemeProvider>
