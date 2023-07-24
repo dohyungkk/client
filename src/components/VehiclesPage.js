@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
+
 import DirectionsCarOutlined from "@mui/icons-material/DirectionsCarOutlined";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
-import axios from 'axios';
 import { Button } from "@mui/material";
+
+import axios from 'axios';
 
 const VehiclesPage = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -13,12 +15,14 @@ const VehiclesPage = () => {
   const DISPLAY_PER_PAGE = 4
   let [currPage, setCurrPage] = useState(0)
 
+  const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
   useEffect(() => {
     requestVehicles();
   }, []);
 
   const requestVehicles = () => {
-    axios.get("http://localhost:8000/vehicles", { params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage } })
+    axios.get(`${SERVER_URL}/vehicles`, { params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage } })
         .then((response) => {
             const totalVehicles = [...vehicles, ...response.data.vehicles]
             setVehicles(totalVehicles)

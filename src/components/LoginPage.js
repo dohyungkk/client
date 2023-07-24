@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { TextField, Button } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -8,8 +9,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
+
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const defaultTheme = createTheme();
 const LoginPage = ({ onLogin }) => {
@@ -17,10 +18,12 @@ const LoginPage = ({ onLogin }) => {
   const [errorMessage, setErrorMessage] = useState('')
   
   const navigate = useNavigate();
+  
+  const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
   const requestLogin = (e) => {
     e.preventDefault()
-    axios.post("http://localhost:8000/login", {
+    axios.post(`${SERVER_URL}/login`, {
       email: creds.email,
       password: creds.password
     })
