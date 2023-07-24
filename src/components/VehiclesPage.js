@@ -9,32 +9,27 @@ import { Button } from "@mui/material";
 
 const VehiclesPage = () => {
   const [vehicles, setVehicles] = useState([]);
-  const DISPLAY_PER_PAGE = 300
+  const [isLazyLoadingPossible, setIsLazyLoadigPossible] = useState(true)
+  const DISPLAY_PER_PAGE = 4
   let [currPage, setCurrPage] = useState(0)
 
-  const clickButton = () => {
-    setCurrPage(currPage+1)
-    console.log(currPage)
-  }
+  useEffect(() => {
+    requestVehicles();
+  }, []);
 
   const requestVehicles = () => {
     axios.get("http://localhost:8000/vehicles", { params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage } })
         .then((response) => {
-            setVehicles(response.data)
-            // console.log(response.data)
+            const totalVehicles = [...vehicles, ...response.data.vehicles]
+            setVehicles(totalVehicles)
+            setCurrPage(currPage+1)
+            if(totalVehicles.length === response.data.total){
+              setIsLazyLoadigPossible(false)
+            }
         }).catch((error) => {
             console.log(error)
         })
   }
-  useEffect(() => {
-    axios.get("http://localhost:8000/vehicles")
-        .then((response) => {
-            setVehicles(response.data)
-            // console.log(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-  })
 
   // From https://mui.com/material-ui/react-grid2/, section "Inheriting spacing"
   const Item = styled(Paper)(({ theme }) => ({
@@ -69,15 +64,20 @@ const VehiclesPage = () => {
           </Grid>
         ) : null}
       </Box>
-      <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={clickButton}
-            >
-              Load More
-            </Button>
+      {
+        isLazyLoadingPossible && (
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            onClick={requestVehicles}
+            
+          >
+            Load More
+          </Button>
+        )
+      } 
     </div>
     
   );
