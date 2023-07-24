@@ -9,11 +9,14 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const defaultTheme = createTheme();
 const LoginPage = ({ onLogin }) => {
   const [creds, setCreds] = useState({});
   const [errorMessage, setErrorMessage] = useState('')
+  
+  const navigate = useNavigate();
 
   const requestLogin = (e) => {
     e.preventDefault()
@@ -22,7 +25,11 @@ const LoginPage = ({ onLogin }) => {
       password: creds.password
     })
     .then((response) => {
-      setErrorMessage('hello')
+      onLogin && onLogin({ session: response.data.secret_key })
+      const user = { username: creds.email, session: response.data.secret_key };
+      onLogin(user);
+      localStorage.setItem("session", JSON.stringify(user));
+      navigate("/vehicles")
     })
     .catch((error) => {
       setErrorMessage(error.response.data.message)

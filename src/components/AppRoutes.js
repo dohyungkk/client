@@ -4,10 +4,15 @@ import LoginPage from "./LoginPage";
 import VehiclesPage from "./VehiclesPage";
 
 const AppRoutes = () => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("session");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
   const navigate = useNavigate();
 
   function ProtectedRoute({ user, children }) {
+    console.log(user)
     if (!user) {
       return <Navigate to="/login" replace />;
     }
@@ -54,7 +59,7 @@ const AppRoutes = () => {
           path="/vehicles"
           element={
             <ProtectedRoute user={user}>
-              <VehiclesPage user={user} />
+              <VehiclesPage />
             </ProtectedRoute>
           }
         />
