@@ -28,8 +28,7 @@ const LoginPage = ({ onLogin }) => {
       password: creds.password
     })
     .then((response) => {
-      onLogin && onLogin({ session: response.data.secret_key })
-      const user = { username: creds.email, session: response.data.secret_key };
+      const user = { email: creds.email, secret_key: response.data.secret_key };
       onLogin(user);
       localStorage.setItem("session", JSON.stringify(user));
       navigate("/vehicles")

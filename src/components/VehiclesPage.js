@@ -22,18 +22,32 @@ const VehiclesPage = () => {
   }, []);
 
   const requestVehicles = () => {
-    axios.get(`${SERVER_URL}/vehicles`, { params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage } })
-        .then((response) => {
-            const totalVehicles = [...vehicles, ...response.data.vehicles]
-            setVehicles(totalVehicles)
-            setCurrPage(currPage+1)
-            if(totalVehicles.length === response.data.total){
-              setIsLazyLoadigPossible(false)
-            }
-        }).catch((error) => {
-            console.log(error)
-        })
-  }
+    
+  
+    let session = localStorage.getItem("session");
+    let pasredSession = JSON.parse(session)
+    const headers = {
+      "email": pasredSession.email,
+      "secret_key": pasredSession.secret_key
+    };
+    
+    axios.get(`${SERVER_URL}/vehicles`, {
+      params: { limit: DISPLAY_PER_PAGE, offset: DISPLAY_PER_PAGE * currPage },
+      headers: headers
+    })
+    .then((response) => {
+      const totalVehicles = [...vehicles, ...response.data.vehicles];
+      setVehicles(totalVehicles);
+      setCurrPage(currPage + 1);
+      if (totalVehicles.length === response.data.total) {
+        setIsLazyLoadigPossible(false);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  };
+  
 
   // From https://mui.com/material-ui/react-grid2/, section "Inheriting spacing"
   const Item = styled(Paper)(({ theme }) => ({
