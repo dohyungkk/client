@@ -5,31 +5,34 @@ import VehiclesPage from "./VehiclesPage";
 
 const AppRoutes = () => {
   const [user, setUser] = useState(() => {
+    // To prevent logging out automatically when refreshing with localStorage
     const storedUser = localStorage.getItem("session");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
   const navigate = useNavigate();
 
+  // Authenticating user before navigating to vehicles page
   function ProtectedRoute({ user, children }) {
-    console.log(user)
     if (!user) {
       return <Navigate to="/login" replace />;
     }
-
     return children;
   }
 
   function LogOut() {
+    // Clearing user and localStorage when logged out so an user can log in again
     setUser(null);
+    localStorage.removeItem("session")
     navigate("/");
   }
 
+  // Extra error page when a problem with login occurs
   function NoMatch() {
     return (
-      <div style={{ padding: 20 }}>
+      <div>
         <h2>404: Page Not Found</h2>
-        <p>Email address or password does not match database</p>
+        <p>Login failed. Please restart the app</p>
       </div>
     );
   }

@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { TextField, Button } from "@mui/material";
-import CssBaseline from "@mui/material/CssBaseline";
+import { Avatar, Button, Container, CssBaseline, TextField, ThemeProvider, Typography } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Avatar from "@mui/material/Avatar";
 
 import axios from 'axios';
 
+// Retrieved from https://mui.com/material-ui/getting-started/templates/sign-in/
 const defaultTheme = createTheme();
-const LoginPage = ({ onLogin }) => {
+
+const LoginPage = () => {
   const [creds, setCreds] = useState({});
   const [errorMessage, setErrorMessage] = useState('')
   
@@ -23,13 +21,17 @@ const LoginPage = ({ onLogin }) => {
 
   const requestLogin = (e) => {
     e.preventDefault()
+
+    // Posting email and password for logging in to the backend (validation in backend) 
     axios.post(`${SERVER_URL}/login`, {
       email: creds.email,
       password: creds.password
     })
     .then((response) => {
+      // Adding email and secret_key, which can be found at server/controller/loginController line 65
       const user = { email: creds.email, secret_key: response.data.secret_key };
-      onLogin(user);
+
+      // Preventing logging out automatically when refreshing
       localStorage.setItem("session", JSON.stringify(user));
       navigate("/vehicles")
     })
@@ -39,6 +41,7 @@ const LoginPage = ({ onLogin }) => {
   }
 
   return (
+    // Retrieved from https://mui.com/material-ui/getting-started/templates/sign-in/
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -81,9 +84,9 @@ const LoginPage = ({ onLogin }) => {
                 id="password"
                 value={creds.password}
                 onChange={(e) => setCreds({ ...creds, password: e.target.value })}
-                autoComplete="current-password"
+                autoComplete="password"
               />
-              <p>{errorMessage}</p>
+              <b className="b_error">{errorMessage}</b>
               <Button
                 type="submit"
                 fullWidth

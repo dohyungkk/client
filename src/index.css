@@ -7,6 +7,37 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h2 {
+  margin-left: 2.5em;
+}
+
+hr {
+  width: 90%;
+  margin-bottom: 5em;
+}
+
+p {
+  font-family: Calibri;
+}
+
+.p_top {
+  color: #363435;
+  margin-bottom: 2em;
+}
+
+.p_mid {
+  font-size: 120%;
+}
+
+.p_bottom {
+  color: #5c585a;
+  margin-top: -1em;
+}
+
+.b_error {
+  color: red;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
